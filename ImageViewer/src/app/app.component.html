@@ -1,0 +1,20 @@
+<div class="app-container">
+  <mat-toolbar color="primary" class="app-toolbar">
+    <span class="app-title">DICOM Viewer</span>
+    <span class="spacer"></span>
+    <nav class="app-nav">
+      <a mat-button routerLink="/upload" routerLinkActive="active">
+        <mat-icon>cloud_upload</mat-icon>
+        Upload
+      </a>
+      <a mat-button routerLink="/gallery" routerLinkActive="active">
+        <mat-icon>grid_view</mat-icon>
+        View DICOM Images
+      </a>
+    </nav>
+  </mat-toolbar>
+  
+  <main class="app-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

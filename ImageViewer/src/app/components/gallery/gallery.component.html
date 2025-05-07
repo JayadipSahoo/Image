@@ -1,0 +1,51 @@
+<div class="gallery-container">
+  <div class="main-grid">
+    <div class="viewer-container" [class.has-image]="selectedImage">
+      <div *ngIf="!selectedImage" class="placeholder-content">
+        <mat-icon>image</mat-icon>
+        <p>Select a DICOM image to view</p>
+        <input
+          type="file"
+          #fileInput
+          style="display: none"
+          (change)="onFileSelected($event)"
+          accept=".dcm,application/dicom"
+          multiple
+        />
+        <button mat-raised-button color="primary" (click)="fileInput.click()">
+          Upload DICOM Images
+        </button>
+      </div>
+      <app-dicom-viewer 
+        *ngIf="selectedImage" 
+        [selectedImage]="selectedImage">
+      </app-dicom-viewer>
+    </div>
+  </div>
+
+  <div class="side-panel">
+    <h3>DICOM Images</h3>
+    <div class="image-list">
+      <div *ngFor="let image of allImages" 
+           class="image-item"
+           [class.selected]="selectedImage?.id === image.id"
+           (click)="selectImage(image)">
+        <div class="image-name">{{image.name}}</div>
+        <div class="image-meta">
+          <div class="image-info" *ngIf="image.patientName"><strong>Patient:</strong> {{image.patientName}}</div>
+          <div class="image-info" *ngIf="image.patientId"><strong>ID:</strong> {{image.patientId}}</div>
+          <div class="image-info" *ngIf="image.modality"><strong>Modality:</strong> {{image.modality}}</div>
+          <div class="image-info" *ngIf="image.studyDate"><strong>Date:</strong> {{image.studyDate}}</div>
+          <div class="image-info" *ngIf="image.seriesDescription"><strong>Series:</strong> {{image.seriesDescription}}</div>
+          <div class="image-info" *ngIf="image.bodyPart"><strong>Body Part:</strong> {{image.bodyPart}}</div>
+          <div class="image-info" *ngIf="image.rows && image.columns"><strong>Size:</strong> {{image.rows}}×{{image.columns}}</div>
+        </div>
+        <div class="image-actions">
+          <button mat-icon-button (click)="$event.stopPropagation(); deleteImage(image)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

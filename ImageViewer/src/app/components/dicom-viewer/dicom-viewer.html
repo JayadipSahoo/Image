@@ -1,0 +1,150 @@
+<div class="dicom-container">
+    <div class="viewer-header">
+      <span class="header-title">DICOM Viewer</span>
+    </div>
+    
+    <div #dicomContainer class="viewer-canvas">
+      <div *ngIf="isLoading" class="loading-indicator">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>Loading DICOM image...</p>
+      </div>
+      <div *ngIf="loadError" class="error-overlay">
+        <mat-icon color="warn">error</mat-icon>
+        <p>{{loadError}}</p>
+        <button mat-raised-button color="primary" (click)="retryLoad()">
+          Try Again
+        </button>
+      </div>
+    </div>
+    
+    <div class="viewer-controls">
+      <button mat-button (click)="zoomIn()" [disabled]="!isImageLoaded">
+        <mat-icon>zoom_in</mat-icon> Zoom In
+      </button>
+      <button mat-button (click)="zoomOut()" [disabled]="!isImageLoaded">
+        <mat-icon>zoom_out</mat-icon> Zoom Out
+      </button>
+      <button mat-button (click)="resetView()" [disabled]="!isImageLoaded">
+        <mat-icon>restart_alt</mat-icon> Reset
+      </button>
+    </div>
+    
+    <mat-card class="dicom-metadata" *ngIf="selectedImage">
+      <mat-card-header>
+        <mat-card-title>DICOM Metadata</mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="metadata-content">
+        <div class="metadata-section">
+          <h3>File Information</h3>
+          <div class="metadata-row">
+            <span class="metadata-label">Filename:</span>
+            <span class="metadata-value">{{selectedImage.name}}</span>
+          </div>
+          <div class="metadata-row" *ngIf="selectedImage.fileSize">
+            <span class="metadata-label">File Size:</span>
+            <span class="metadata-value">{{selectedImage.fileSize | number}} bytes</span>
+          </div>
+          <div class="metadata-row" *ngIf="selectedImage.uploadDate">
+            <span class="metadata-label">Upload Date:</span>
+            <span class="metadata-value">{{selectedImage.uploadDate | date:'medium'}}</span>
+          </div>
+        </div>
+
+        <div class="metadata-section">
+          <h3>Patient Information</h3>
+          <div class="metadata-row" *ngIf="selectedImage.patientName">
+            <span class="metadata-label">Patient Name:</span>
+            <span class="metadata-value">{{selectedImage.patientName}}</span>
+          </div>
+          <div class="metadata-row" *ngIf="selectedImage.patientId">
+            <span class="metadata-label">Patient ID:</span>
+            <span class="metadata-value">{{selectedImage.patientId}}</span>
+          </div>
+          <div class="metadata-row" *ngIf="selectedImage.patientBirthDate">
+            <span class="metadata-label">Birth Date:</span>
+            <span class="metadata-value">{{selectedImage.patientBirthDate}}</span>
+          </div>
+          <div class="metadata-row" *ngIf="selectedImage.patientSex">
+            <span class="metadata-label">Sex:</span>
+            <span class="metadata-value">{{selectedImage.patientSex}}</span>
+          </div>
+        </div>
+
+        <div class="metadata-section">
+          <h3>Study Information</h3>
+          <div class="metadata-row" *ngIf="selectedImage.studyId">
+            <span class="metadata-label">Study ID:</span>
+            <span class="metadata-value">{{selectedImage.studyId}}</span>
+          </div>
+          <div class="metadata-row" *ngIf="selectedImage.studyInstanceUid">
+            <span class="metadata-label">Study UID:</span>
+            <span class="metadata-value">{{selectedImage.studyInstanceUid}}</span>
+          </div>
+          <div class="metadata-row" *ngIf="selectedImage.studyDate">
+            <span class="metadata-label">Study Date:</span>
+            <span class="metadata-value">{{selectedImage.studyDate}}</span>
+          </div>
+          <div class="metadata-row" *ngIf="selectedImage.studyTime">
+            <span class="metadata-label">Study Time:</span>
+            <span class="metadata-value">{{selectedImage.studyTime}}</span>
+          </div>
+        </div>
+
+        <div class="metadata-section">
+          <h3>Series Information</h3>
+          <div class="metadata-row" *ngIf="selectedImage.modality">
+            <span class="metadata-label">Modality:</span>
+            <span class="metadata-value">{{selectedImage.modality}}</span>
+          </div>
+          <div class="metadata-row" *ngIf="selectedImage.seriesInstanceUid">
+            <span class="metadata-label">Series UID:</span>
+            <span class="metadata-value">{{selectedImage.seriesInstanceUid}}</span>
+          </div>
+          <div class="metadata-row" *ngIf="selectedImage.seriesNumber">
+            <span class="metadata-label">Series Number:</span>
+            <span class="metadata-value">{{selectedImage.seriesNumber}}</span>
+          </div>
+          <div class="metadata-row" *ngIf="selectedImage.seriesDescription">
+            <span class="metadata-label">Description:</span>
+            <span class="metadata-value">{{selectedImage.seriesDescription}}</span>
+          </div>
+          <div class="metadata-row" *ngIf="selectedImage.bodyPart">
+            <span class="metadata-label">Body Part:</span>
+            <span class="metadata-value">{{selectedImage.bodyPart}}</span>
+          </div>
+        </div>
+
+        <div class="metadata-section">
+          <h3>Image Information</h3>
+          <div class="metadata-row" *ngIf="selectedImage.rows">
+            <span class="metadata-label">Rows:</span>
+            <span class="metadata-value">{{selectedImage.rows}}</span>
+          </div>
+          <div class="metadata-row" *ngIf="selectedImage.columns">
+            <span class="metadata-label">Columns:</span>
+            <span class="metadata-value">{{selectedImage.columns}}</span>
+          </div>
+          <div class="metadata-row" *ngIf="selectedImage.imageType">
+            <span class="metadata-label">Image Type:</span>
+            <span class="metadata-value">{{selectedImage.imageType}}</span>
+          </div>
+          <div class="metadata-row" *ngIf="selectedImage.instanceNumber">
+            <span class="metadata-label">Instance Number:</span>
+            <span class="metadata-value">{{selectedImage.instanceNumber}}</span>
+          </div>
+        </div>
+
+        <div class="metadata-section" *ngIf="selectedImage.windowCenter || selectedImage.windowWidth">
+          <h3>Display Information</h3>
+          <div class="metadata-row" *ngIf="selectedImage.windowCenter">
+            <span class="metadata-label">Window Center:</span>
+            <span class="metadata-value">{{selectedImage.windowCenter}}</span>
+          </div>
+          <div class="metadata-row" *ngIf="selectedImage.windowWidth">
+            <span class="metadata-label">Window Width:</span>
+            <span class="metadata-value">{{selectedImage.windowWidth}}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
